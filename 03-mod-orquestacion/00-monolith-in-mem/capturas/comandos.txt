@@ -1,0 +1,12 @@
+Lo primero, desde docker hub hago un pull de la imagen: lemoncodersbc/lc-todo-monolith:v5-2024
+
+docker images para revisar si esta la imagen
+
+docker run -p 3000:3000 lemoncodersbc/lc-todo-monolith:v5-2024
+
+lo que hago ahora es desde docker ver mas o menos cuanto consume
+
+uso eso para setear los request y le doy un poquito mas para los limites. Tambien agrego liveness y readiness probes
+
+hacemos un minikube start
+

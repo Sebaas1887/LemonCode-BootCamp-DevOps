@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: seba
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-back-config-seba
+  namespace: seba
+data:
+  NODE_ENV : production
+  PORT : "3000"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-back-deployment-seba
+  namespace: seba  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-back-seba
+  template:
+    metadata:
+      labels:
+        app: todo-back-seba
+    spec:
+      containers:
+        - name: todo-back
+          image: lemoncodersbc/lc-todo-api:v5-2024
+          ports:
+            - containerPort: 3000 #le indicamos a k8s que espere trafico por este port
+
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: todo-back-config-seba
+                  key: NODE_ENV
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: todo-back-config-seba
+                  key: PORT             
+
+          resources:
+            requests:
+              memory: "40Mi"
+              cpu: "10m"
+            limits:
+              memory: "50Mi"
+              cpu: "15m"
+
+          readinessProbe:
+            httpGet:
+              path: /api
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /api
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3            
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-back-service-seba
+  namespace: seba
+spec:
+  type: ClusterIP
+  selector:
+    app: todo-back-seba
+  ports:
+    - protocol: TCP
+      port: 3000 # puerto service
+      targetPort: 3000 # puerto container
