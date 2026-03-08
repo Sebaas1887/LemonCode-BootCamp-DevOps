@@ -1,8 +1,11 @@
 pipeline {
     agent any
 
-    stages {
+    options {
+        skipDefaultCheckout(true)
+    }
 
+    stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Sebaas1887/LemonCode-BootCamp-DevOps.git'
@@ -12,6 +15,7 @@ pipeline {
         stage('Compile') {
             steps {
                 dir('04-cicd/jenkins-resources/calculator') {
+                    sh 'chmod +x gradlew'
                     sh './gradlew compileJava'
                 }
             }
@@ -24,6 +28,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
