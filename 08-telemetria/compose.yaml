@@ -1,0 +1,19 @@
+services:
+  app_map:
+    build:
+      context: ./app_map
+    container_name: app_map_seba
+    ports:
+      - "8000:8000"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: prometheus_seba
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    depends_on:
+      - app_map

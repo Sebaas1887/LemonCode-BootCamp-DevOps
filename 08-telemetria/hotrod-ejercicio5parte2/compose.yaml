@@ -1,0 +1,29 @@
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:${JAEGER_VERSION:-1.63.0}
+    container_name: jaeger_hotrod_seba
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - jaeger-hotrod
+
+  hotrod:
+    image: jaegertracing/example-hotrod:${HOTROD_VERSION:-1.63.0}
+    container_name: hotrod_seba
+    command: ["all"]
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+    depends_on:
+      - jaeger
+    networks:
+      - jaeger-hotrod
+
+networks:
+  jaeger-hotrod:

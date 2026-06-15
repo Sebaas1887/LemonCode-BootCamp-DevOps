@@ -1,0 +1,18 @@
+# Terraform local/generated files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# Terraform crash/debug logs
+crash.log
+crash.*.log
+
+# Terraform local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local CLI config
+.terraformrc
+terraform.rc
